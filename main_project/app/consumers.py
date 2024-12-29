@@ -2,6 +2,7 @@ from channels.consumer import SyncConsumer, AsyncConsumer
 from channels.exceptions import StopConsumer
 from time import sleep
 import asyncio
+import json
 
 class MySyncConsumer(SyncConsumer):
     # Handles WebSocket connection for synchronous communication
@@ -16,10 +17,10 @@ class MySyncConsumer(SyncConsumer):
         print(f"Message received from client: {event.get('text', 'No message received')}")
         
         # Sends multiple replies back to the client
-        for i in range(50):
+        for i in range(10):
             self.send({
                 'type': 'websocket.send',
-                'text': f"Replying to client: message number {i}"
+                'text': json.dumps({'count':i})
             })
             sleep(1)  # Simulate a delay between messages
 
@@ -42,10 +43,10 @@ class MyAsyncConsumer(AsyncConsumer):
         print(f"Message received from client: {event.get('text', 'No message received')}")
         
         # Sends multiple replies back to the client asynchronously
-        for i in range(50):
+        for i in range(10):
             await self.send({
                 'type': 'websocket.send',
-                'text': f"Replying to client: message number {i}"
+                'text': json.dumps({'count':i})
             })
             await asyncio.sleep(1)  # Simulate a delay between messages
 

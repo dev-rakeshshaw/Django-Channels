@@ -7,11 +7,12 @@
 </head>
 <body>
     <h1>WebSocket Count Page</h1>
+    <h2 id="ct"></h2>
     <p>Check the console for WebSocket logs and interactions.</p>
 
     <script>
         // Establishing a WebSocket connection
-        const ws = new WebSocket('ws://127.0.0.1:8000/ws/sc/');
+        const ws = new WebSocket('ws://127.0.0.1:8000/ws/ac/');
 
         // WebSocket property-based event handlers
         ws.onopen = function () {
@@ -20,7 +21,9 @@
         };
 
         ws.onmessage = function (event) {
-            console.log("Message received from the server:", event.data); // Logging the server's response
+            var data = JSON.parse(event.data)
+            console.log("Message received from the server:", data.count); // Logging the server's response
+            document.getElementById("ct").innerText = data.count
         };
 
         ws.onerror = function (event) {
@@ -31,23 +34,25 @@
             console.warn("WebSocket connection closed:", event); // Logging when the connection is closed
         };
 
-        // WebSocket event listener-based handlers (alternative approach)
-        ws.addEventListener('open', function (event) {
-            console.log("EventListener: WebSocket connection opened.", event);
-            ws.send("Hello again from the client (via EventListener)!");
-        });
+        // // WebSocket event listener-based handlers (alternative approach)
+        // ws.addEventListener('open', function (event) {
+        //     console.log("EventListener: WebSocket connection opened.", event);
+        //     ws.send("Hello again from the client (via EventListener)!");
+        // });
 
-        ws.addEventListener('message', function (event) {
-            console.log("EventListener: Message received from the server:", event.data);
-        });
+        // ws.addEventListener('message', function (event) {
+        //     var data = JSON.parse(event.data)
+        //     console.log("Message received from the server:", data.count); // Logging the server's response
+        //     document.getElementById("ct").innerText = data.count
+        // });
 
-        ws.addEventListener('error', function (event) {
-            console.error("EventListener: WebSocket error occurred.", event);
-        });
+        // ws.addEventListener('error', function (event) {
+        //     console.error("EventListener: WebSocket error occurred.", event);
+        // });
 
-        ws.addEventListener('close', function (event) {
-            console.warn("EventListener: WebSocket connection closed.", event);
-        });
+        // ws.addEventListener('close', function (event) {
+        //     console.warn("EventListener: WebSocket connection closed.", event);
+        // });
     </script>
 </body>
 </html>
