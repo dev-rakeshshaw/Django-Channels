@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Demo</title>
+</head>
+<body>
+    <h1>WebSocket Count Page</h1>
+    <p>Check the console for WebSocket logs and interactions.</p>
+
+    <script>
+        // Establishing a WebSocket connection
+        const ws = new WebSocket('ws://127.0.0.1:8000/ws/sc/');
+
+        // WebSocket property-based event handlers
+        ws.onopen = function () {
+            console.log("WebSocket connection established with the server.");
+            ws.send("Hello from the client!"); // Sending an initial message to the server
+        };
+
+        ws.onmessage = function (event) {
+            console.log("Message received from the server:", event.data); // Logging the server's response
+        };
+
+        ws.onerror = function (event) {
+            console.error("An error occurred with the WebSocket connection:", event); // Logging any WebSocket errors
+        };
+
+        ws.onclose = function (event) {
+            console.warn("WebSocket connection closed:", event); // Logging when the connection is closed
+        };
+
+        // WebSocket event listener-based handlers (alternative approach)
+        ws.addEventListener('open', function (event) {
+            console.log("EventListener: WebSocket connection opened.", event);
+            ws.send("Hello again from the client (via EventListener)!");
+        });
+
+        ws.addEventListener('message', function (event) {
+            console.log("EventListener: Message received from the server:", event.data);
+        });
+
+        ws.addEventListener('error', function (event) {
+            console.error("EventListener: WebSocket error occurred.", event);
+        });
+
+        ws.addEventListener('close', function (event) {
+            console.warn("EventListener: WebSocket connection closed.", event);
+        });
+    </script>
+</body>
+</html>
