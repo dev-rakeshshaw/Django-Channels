@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Define the character encoding and responsive design meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the webpage -->
+    <title>Chat App</title>
+</head>
+
+<body>
+    <h1>Group Name {{group_name}}</h1>
+    <!-- Textarea to display the chat log -->
+    <textarea name="" id="chat-log" cols="100" rows="20" readonly></textarea><br>
+    
+    <!-- Input field to type messages -->
+    <input type="text" name="" id="chat-message-input" size="100">
+    
+    <!-- Button to send the message -->
+    <input type="button" value="send" id="chat-message-submit">
+
+    {{group_name|json_script:"group_name"}}
+
+    <!-- JavaScript code to handle WebSocket communication -->
+    <script>
+        const group_name = JSON.parse(document.getElementById('group_name').textContent)
+
+        // Creating a WebSocket connection to the server
+        // const ws = new WebSocket('ws://127.0.0.1:8000/ws/chat_ac/');
+
+
+        const ws = new WebSocket('ws://' + window.location.host + '/ws/chat_ac/' + group_name +'/');
+
+        // Event triggered when the WebSocket connection is successfully established
+        ws.onopen = function () {
+            console.log("WebSocket connection established with the server."); // Log the successful connection
+        };
+
+        // Event triggered when a message is received from the server
+        ws.onmessage = function (event) {
+            console.log("Message received from the server:", event.data); // Log the message data
+
+            // Parse the received JSON message into a JavaScript object
+            const data = JSON.parse(event.data);
+
+            // Append the received message to the chat log
+            document.querySelector('#chat-log').value += (data.msg + '\n');
+        };
+
+        // Event triggered when there is an error with the WebSocket
+        ws.onerror = function (event) {
+            console.error("An error occurred with the WebSocket connection:", event); // Log the error
+        };
+
+        // Event triggered when the WebSocket connection is closed
+        ws.onclose = function (event) {
+            console.warn("WebSocket connection closed:", event); // Log the closure
+        };
+
+        // Add a click event listener to the "send" button
+        document.getElementById('chat-message-submit').onclick = function(event) {
+            // Get the message input field
+            const messageInputDom = document.getElementById('chat-message-input');
+            
+            // Retrieve the value typed by the user
+            const message = messageInputDom.value;
+            
+            // Create a JSON object with the message to send to the server
+            const msg_json = JSON.stringify({
+                'msg': message
+            });
+
+            // Send the JSON message through the WebSocket
+            ws.send(msg_json);
+
+            // Clear the message input field after sending the message
+            messageInputDom.value = "";
+        };
+    </script>
+</body>
+
+</html>
